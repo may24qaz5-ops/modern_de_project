@@ -1,0 +1,31 @@
+name: dbt_CI_Security_Guard
+
+# 💡 設定觸發條件：只要有人對 main 分支發起 Pull Request (發起合併申請)，保安就立刻開工
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  dbt_compile_check:
+    runs-on: ubuntu-latest # 憑空變出一台乾淨的 Linux 電腦
+
+    steps:
+      - name: 1. 複製專案代碼
+        uses: actions/checkout@v4
+
+      - name: 2. 設定 Python 環境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 3. 安裝 uv 與 dbt
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          uses: astral-sh/setup-uv@v3
+          uv pip install dbt-postgresql --system
+
+      - name: 4. 語法大檢查 (Compile)
+        run: |
+          # 這裡叫雲端保安悄悄編譯所有的 SQL，檢查有沒有少打逗號、括號沒對齊或 Jinja 語法寫錯
+          dbt compile --profiles-dir .
