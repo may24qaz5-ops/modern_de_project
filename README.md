@@ -13,3 +13,18 @@
 - **Monorepo 專案管理**：將 Python Ingestion 腳本、Prefect 排程與 dbt 轉型專案整合於單一儲存庫，符合現代 DataOps 的基礎建設開發規範。
 - **企業級自動化語法防護**：內建 CI/CD Pipeline，於 GitHub Background 自動執行 `dbt compile` 驗證與 Schema 檢查，大幅減少人為粗心導致的生產環境中斷。
 - *   **維度建模實務 (Dimensional Modeling)**：擺脫傳統大寬表思維，於 dbt 內部實作經典的星狀模型 (Star Schema)，嚴格定義 Dimensions 與 Fact Tables，優化下游 BI 的查詢效能。
+
+## 📁 專案目錄結構 (Project Structure)
+
+```text
+├── .github/workflows/                 # DataOps CI (GitHub Actions 定義)
+├── olist_customers_dataset.csv        # Olist 原始數據集 (示例)
+├── olist_order_items_dataset.csv      
+├── olist_orders_dataset.csv           
+├── olist_products_dataset.csv         
+├── upload.py                          # 核心 Ingestion 腳本 (將 CSV 寫入 PostgreSQL)
+├── orchestrate_pipeline.py            # Prefect 自動化工作流與排程調度腳本
+├── upload_translation.py              # 繁中化與資料轉換處理
+├── make_ppt.py                        # 專案簡報自動化產出腳本
+├── README.md                          # 專案說明文件
+└── modern_de_project_presentation...  # 專案簡報與架構說明
