@@ -10,5 +10,6 @@
 5. **資料視覺化 (BI)**：串接 **Power BI** 打造營運決策看板。
 
 ## ⚡ 專案核心技術亮點
-- **Monorepo 專案管理**：將 Python 調度腳本與 dbt 專案整合管理，符合現代 DataOps 開發規範。
-- **自動化語法防護**：內建 CI/CD Pipeline，大幅減少人為粗心導致的生產環境錯誤。
+- **Monorepo 專案管理**：將 Python Ingestion 腳本、Prefect 排程與 dbt 轉型專案整合於單一儲存庫，符合現代 DataOps 的基礎建設開發規範。
+- **企業級自動化語法防護**：內建 CI/CD Pipeline，於 GitHub Background 自動執行 `dbt compile` 驗證與 Schema 檢查，大幅減少人為粗心導致的生產環境中斷。
+- *   **維度建模實務 (Dimensional Modeling)**：擺脫傳統大寬表思維，於 dbt 內部實作經典的星狀模型 (Star Schema)，嚴格定義 Dimensions 與 Fact Tables，優化下游 BI 的查詢效能。
