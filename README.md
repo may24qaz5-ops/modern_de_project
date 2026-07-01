@@ -18,7 +18,7 @@
 
 ```text
 ├── .github/workflows/                 # DataOps CI (GitHub Actions 定義)
-├── olist_customers_dataset.csv        # Olist 原始數據集 (示例)
+├── olist_customers_dataset.csv        # Olist 原始數據集
 ├── olist_order_items_dataset.csv      
 ├── olist_orders_dataset.csv           
 ├── olist_products_dataset.csv         
