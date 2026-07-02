@@ -1,6 +1,6 @@
 name: dbt_CI_Security_Guard
 
-# 💡 設定觸發條件：只要有人對 main 分支發起 Pull Request (發起合併申請)，保安就立刻開工
+# 💡 設定觸發條件：只要有人對 main 分支發起 Pull Request，保安就立刻開工
 on:
   pull_request:
     branches:
@@ -19,11 +19,15 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: 3. 安裝 uv 與 dbt
+      # 🚀 修正後的第 3 步：正統使用官方 setup-uv 插件，速度極快
+      - name: 3. 設定 uv 環境並安裝 dbt
+        uses: astral-sh/setup-uv@v3
+        with:
+          version: "latest"
+
+      - name: 3.5 使用 uv 安裝 dbt 套件
         run: |
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-          uses: astral-sh/setup-uv@v3
-          uv pip install dbt-postgresql --system
+          uv pip install dbt-core dbt-postgres --system
 
       - name: 4. 語法大檢查 (Compile)
         run: |
