@@ -1,14 +1,16 @@
-name: dbt_CI_Security_Guard
+﻿name: dbt_CI_Security_Guard
 
-# 💡 設定觸發條件：只要有人對 main 分支發起 Pull Request，保安就立刻開工
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
 
 jobs:
   dbt_compile_check:
-    runs-on: ubuntu-latest # 憑空變出一台乾淨的 Linux 電腦
+    runs-on: ubuntu-latest
 
     steps:
       - name: 1. 複製專案代碼
@@ -19,7 +21,6 @@ jobs:
         with:
           python-version: '3.11'
 
-      # 🚀 修正後的第 3 步：正統使用官方 setup-uv 插件，速度極快
       - name: 3. 設定 uv 環境並安裝 dbt
         uses: astral-sh/setup-uv@v3
         with:
@@ -31,5 +32,4 @@ jobs:
 
       - name: 4. 語法大檢查 (Compile)
         run: |
-          # 這裡叫雲端保安悄悄編譯所有的 SQL，檢查有沒有少打逗號、括號沒對齊或 Jinja 語法寫錯
           dbt compile --profiles-dir .
