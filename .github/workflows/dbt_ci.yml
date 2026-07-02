@@ -31,6 +31,6 @@ jobs:
           uv pip install dbt-core dbt-postgres --system
 
       - name: 4. 語法大檢查 (Compile)
-           working-directory: ./dbt_project  
-           run: |
-             dbt compile --profiles-dir .
+          working-directory: ./dbt_project  
+          run: |
+            dbt compile --profiles-dir .
