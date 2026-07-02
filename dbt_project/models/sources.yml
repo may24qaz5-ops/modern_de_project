@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: ecom_raw
+    schema: public  # 🎯 檢查一下你在 pgAdmin 裡這些表是不是在 public 底下
+    tables:
+      - name: raw_orders
+      - name: raw_customers
+      - name: raw_orders_items
+      - name: raw_products

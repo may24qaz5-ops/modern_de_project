@@ -1,0 +1,55 @@
+version: 2
+
+models:
+  - name: dim_customers
+    description: "客戶維度主資料，包含地理位置與唯一識別碼"
+    columns:
+      - name: customer_id
+        description: "Transaction 級別的客戶 ID"
+        tests:
+          - unique
+          - not_null
+
+  - name: dim_products
+    description: "商品維度主資料，包含類別與物理特徵"
+    columns:
+      - name: product_id
+        description: "商品唯一識別碼 (PK)"
+        tests:
+          - unique
+          - not_null
+      - name: product_category_name
+        description: "商品分類名稱"
+        # 💡 這裡先不放 accepted_values，因為電商分類太多且會隨業務增加，測 not_null 即可
+
+  - name: fct_orders
+    description: "訂單與營收核心事實表（粒度：訂單明細級別）"
+    columns:
+      - name: order_id
+        description: "訂單編號"
+        tests:
+          - not_null  # 🎯 沒錯！一單多品，不可測 unique，保持 not_null 非常專業
+
+      - name: order_status
+        description: "訂單狀態"
+        tests:
+          - accepted_values:
+              values: ['delivered', 'shipped', 'canceled', 'invoiced', 'processing', 'approved', 'unavailable', 'created']
+
+      # 🛡️ 升級防線一：測試顧客外鍵的參照完整性
+      - name: customer_id
+        description: "客戶外鍵"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_customers')
+              field: customer_id
+
+      # 🛡️ 升級防線二：測試商品外鍵的參照完整性
+      - name: product_id
+        description: "商品外鍵"
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_products')
+              field: product_id
