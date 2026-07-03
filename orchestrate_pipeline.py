@@ -2,15 +2,18 @@ from prefect import task, flow
 import subprocess
 import os
 
-# 💡 請在這裡設定你的實體路徑
-DBT_PROJECT_PATH = r"D:\dbt-project\dbt_project"
-UPLOAD_SCRIPT_PATH = r"D:\modern_de_project\upload.py" # 假設 upload.py 在這裡，請依據實際狀況修改
+# 🟢 動態偵測目前專案的根目錄，不管是 D 槽還是雲端 Ubuntu 都能自動對齊！
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# 💡 這樣寫，本機、雲端都能完美找到正確位置
+DBT_PROJECT_PATH = os.path.join(BASE_DIR, "dbt_project")
+UPLOAD_SCRIPT_PATH = os.path.join(BASE_DIR, "upload.py")
 
 @task(retries=2, retry_delay_seconds=60)
 def run_python_ingestion():
     print("🚚 砂石車啟動：開始讀取 Olist CSV 並寫入 PostgreSQL...")
     
-    # 使用絕對路徑來讀取與執行 upload.py，確保不管在哪跑都抓得到
+    # 使用動態絕對路徑來讀取與執行 upload.py
     with open(UPLOAD_SCRIPT_PATH, "r", encoding="utf-8") as f:
         exec(f.read(), globals())
         
@@ -20,9 +23,8 @@ def run_python_ingestion():
 def run_dbt_transform():
     print("⚡ dbt 啟動：開始執行資料轉換與繁中翻譯...")
     
-    # 💡 關鍵：使用 subprocess 並指定 cwd (Current Working Directory)
-    # 這樣就等於叫作業系統「先切換到 dbt 目錄，再執行 dbt run」
-    result = subprocess.run(["dbt", "run"], cwd=DBT_PROJECT_PATH)
+    # 💡 保安會乖乖走進 ./dbt_project 底下執行，而且會帶上我們設定好的 profiles 參數
+    result = subprocess.run(["dbt", "run", "--profiles-dir", "."], cwd=DBT_PROJECT_PATH)
     
     if result.returncode != 0:
         raise Exception("❌ dbt run 執行失敗！")
@@ -31,8 +33,7 @@ def run_dbt_transform():
 def run_dbt_test():
     print("🧪 dbt 測試：開始驗證資料完整性...")
     
-    # 同理，去 dbt 的目錄下執行 dbt test
-    result = subprocess.run(["dbt", "test", "--select", "marts"], cwd=DBT_PROJECT_PATH)
+    result = subprocess.run(["dbt", "test", "--select", "marts", "--profiles-dir", "."], cwd=DBT_PROJECT_PATH)
     
     if result.returncode != 0:
         raise Exception("❌ dbt test 發現髒資料！")

@@ -12,14 +12,13 @@ jobs:
   dbt_compile_check:
     runs-on: ubuntu-latest
 
-    # 💡 關鍵：在雲端電腦裡當場啟動一個點綴用的 PostgreSQL 服務
     services:
       postgres:
         image: postgres:15
         env:
           POSTGRES_DB: postgres
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: post1234
+          POSTGRES_PASSWORD: 妳的真實密碼 # <-- 🔑 確保這裡、upload.py、profiles.yml 三個密碼完全一致
         ports:
           - 5433:5432
 
@@ -32,16 +31,17 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: 3. 設定 uv 環境並安裝 dbt
+      - name: 3. 設定 uv 環境並安裝所有套件
         uses: astral-sh/setup-uv@v3
         with:
           version: "latest"
 
-      - name: 3.5 使用 uv 安裝 dbt 套件
+      # 💡 這裡把 dbt、prefect、pandas 和 sqlalchemy 一把抓，通通裝好！
+      - name: 3.5 安裝 Pipeline 所需套件
         run: |
-          uv pip install dbt-core dbt-postgres --system
+          uv pip install dbt-core dbt-postgres prefect pandas sqlalchemy psycopg2-binary --system
 
-      - name: 4. 語法大檢查 (Compile)
-        working-directory: ./dbt_project
+      # 🚀 終極重頭戲：直接啟動整條 Pipeline！
+      - name: 4. 真正執行整條 Pipeline (Prefect Flow)
         run: |
-          dbt compile --profiles-dir .
+          python orchestrate_pipeline.py
