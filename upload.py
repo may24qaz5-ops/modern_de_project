@@ -41,15 +41,28 @@ try:
         result = connection.execute(text("SELECT 1"))
         print("Connect successfully!")
 
-        #Trucncate all data from table
-        # 1. 修正：所有 SQL 指令都用 text() 包起來
-        # 2. 修正：加上 CASCADE 防止下游 dbt 物件鎖死
-        print("Truncating old raw tables...")
-        connection.execute(text("TRUNCATE TABLE IF EXISTS raw_orders CASCADE;"))
-        connection.execute(text("TRUNCATE TABLE IF EXISTS raw_customers CASCADE;"))
-        connection.execute(text("TRUNCATE TABLE IF EXISTS raw_orders_items CASCADE;"))
-        connection.execute(text("TRUNCATE TABLE IF EXISTS raw_products CASCADE;"))
-        print("Truncate completed successfully!")
+        # 🟢 最安全的做法：一桌一桌檢查是否存在，在的話才清空！
+        tables_to_truncate = ["raw_orders", "raw_customers", "raw_orders_items", "raw_products"]
+        
+        print("Truncating old raw tables if they exist...")
+        for table in tables_to_truncate:
+            # 檢查資料表是否已經存在於 database 中
+            check_query = text(f"""
+                SELECT EXISTS (
+                    SELECT FROM information_schema.tables 
+                    WHERE table_schema = 'public' 
+                    AND table_name = '{table}'
+                );
+            """)
+            table_exists = connection.execute(check_query).scalar()
+            
+            if table_exists:
+                connection.execute(text(f"TRUNCATE TABLE {table} CASCADE;"))
+                print(f"-> Table {table} truncated.")
+            else:
+                print(f"-> Table {table} does not exist yet. Skip truncate.")
+                
+        print("Truncate process completed successfully!")
 
 except Exception as e:
     print("Failed to connect to PostgreSQL.")
