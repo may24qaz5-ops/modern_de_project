@@ -44,6 +44,9 @@ jobs:
       # 🚀 終極重頭戲：直接啟動整條 Pipeline！
       - name: 4. 真正執行整條 Pipeline (Prefect Flow)
         run: |
-          # 💡 關鍵：叫 Prefect 雲端測試時用記憶體就好，別去鎖 SQLite 檔案
           prefect config set PREFECT_API_DATABASE_CONNECTION_URL="sqlite+aiosqlite:///:memory:"
+          
+          # 🟢 關鍵：在砂石車和 dbt 跑之前，先把手動翻譯表 seed 進去資料庫！
+          dbt seed --profiles-dir dbt_project --project-dir dbt_project
+          
           python orchestrate_pipeline.py
