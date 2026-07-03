@@ -45,10 +45,10 @@ try:
         # 1. 修正：所有 SQL 指令都用 text() 包起來
         # 2. 修正：加上 CASCADE 防止下游 dbt 物件鎖死
         print("Truncating old raw tables...")
-        connection.execute(text("TRUNCATE TABLE raw_orders CASCADE;"))
-        connection.execute(text("TRUNCATE TABLE raw_customers CASCADE;"))
-        connection.execute(text("TRUNCATE TABLE raw_orders_items CASCADE;"))
-        connection.execute(text("TRUNCATE TABLE raw_products CASCADE;"))
+        connection.execute(text("TRUNCATE TABLE IF EXISTS raw_orders CASCADE;"))
+        connection.execute(text("TRUNCATE TABLE IF EXISTS raw_customers CASCADE;"))
+        connection.execute(text("TRUNCATE TABLE IF EXISTS raw_orders_items CASCADE;"))
+        connection.execute(text("TRUNCATE TABLE IF EXISTS raw_products CASCADE;"))
         print("Truncate completed successfully!")
 
 except Exception as e:
