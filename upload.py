@@ -28,9 +28,9 @@ print(f"Successful! There's {df_products.shape[0]} products data")
 
 # 🟢 自動偵測：如果在 GitHub 雲端就用 5433，在老大妳的本機電腦就自動用 5432！
 if os.environ.get("CI") == "true":
-    port = "5433"  # 雲端保安專用 Port
+    port = "5432"  # 雲端保安專用 Port
 else:
-    port = "5432"  # 老大本機實體 PostgreSQL Port
+    port = "5433"  # 老大本機實體 PostgreSQL Port
 
 #create db connection
 # 連線字串格式：postgresql://帳號:密碼@主機位置:Port/資料庫名稱
@@ -59,7 +59,7 @@ try:
 except Exception as e:
     print("Failed to connect to PostgreSQL.")
     print(f"Error message as following:{e}")
-    exit()
+    exit(1)
 
 #Pipeline: load data to db
 df_orders.to_sql("raw_orders", con=engine, if_exists="append",index=False,method="multi",chunksize=10000)
