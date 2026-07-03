@@ -17,11 +17,11 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_DB: postgres  # <-- 請改成妳 profiles.yml 裡設定的 db 名字
-          POSTGRES_USER: postgres  # <-- 請改成妳 profiles.yml 裡設定的 user
-          POSTGRES_PASSWORD: postgres  # <-- 請改成妳 profiles.yml 裡設定的密碼
+          POSTGRES_DB: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: post1234
         ports:
-          - 5433:5432 # 讓雲端的 5433 連進去它預設的 5432
+          - 5433:5432
 
     steps:
       - name: 1. 複製專案代碼
